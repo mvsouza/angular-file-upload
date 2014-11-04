@@ -79,16 +79,48 @@ module.exports = function(grunt) {
       				to: '<version><%= pkg.version %></version>'
     			}]
 			}	
-		}	
+		},
+    	connect: {
+    	  all: {
+    	    options:{
+    	      port: 9000,
+    	      hostname: "0.0.0.0",
+    	      // No need for keepalive anymore as watch will keep Grunt running
+    	      //keepalive: true,
+ 	
+    	      // Livereload needs connect to insert a cJavascript snippet
+    	      // in the pages it serves. This requires using a custom connect middleware
+    	      middleware: function(connect, options) {
+ 	
+    	        return [
+ 	
+    	          // Load the middleware provided by the livereload plugin
+    	          // that will take care of inserting the snippet
+    	          require('grunt-contrib-livereload/lib/utils').livereloadSnippet,
+ 	
+    	          // Serve the project folder
+    	          connect.static(options.base)
+    	        ];
+    	      }
+    	    }
+    	  }
+    	},
+    	open: {
+    	  all: {
+    	    path: 'http://localhost:<%= connect.all.options.port%>/demo/war/index.html'
+    	  }
+    	},    
+    	regarde: {
+    	  all: {
+    	    files:['**/*.html','**/*.js'],
+    	    tasks: ['livereload']
+    	  }
+    	}
 	});
 
-	// Load the plugin that provides the "uglify" task.
-	grunt.loadNpmTasks('grunt-contrib-copy');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-text-replace');
-
+	require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
 	// Default task(s).
 	grunt.registerTask('default', [ 'copy:build', 'uglify', 'copy:fileapi', 'copy:bower', 'replace:version' ]);
-
+  	grunt.registerTask('server',['livereload-start','connect','open','regarde']);
 };
