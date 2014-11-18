@@ -292,3 +292,7 @@ For questions, bug reports, and feature request please search through existing [
 
 
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mvsouza/angular-file-upload/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
